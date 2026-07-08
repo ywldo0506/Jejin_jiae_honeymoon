@@ -8,7 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Honeymoon">
 <meta name="theme-color" content="#4A2C6D">
-<link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3ee.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.png">
+<link rel="icon" href="icons/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Parisienne&display=swap" rel="stylesheet">
 <style>
@@ -79,19 +81,25 @@
   .honeymoon-label{display:block; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--gold); text-transform:uppercase; position:relative; margin-bottom:2px;}
   h1{font-family:'Fraunces',serif; font-weight:600; font-size:30px; margin:10px 0 0; color:#fff; position:relative; text-shadow:0 2px 10px rgba(0,0,0,.25);}
   .honeymoon-script{font-family:'Parisienne',cursive; font-size:42px; line-height:1.15; color:var(--gold); display:block; margin:8px 0 4px -2px; position:relative; text-shadow:0 0 18px rgba(227,169,62,.5);}
-  .sub{color:#F3E7CE; font-size:13px; position:relative; opacity:.9;}
+  .sub{color:#F3E7CE; font-size:13px; position:relative; opacity:.9; cursor:pointer;}
+  .sub:hover{text-decoration:underline;}
 
-  .days-row{display:flex; gap:8px; margin-top:20px; overflow-x:auto; padding-bottom:6px;}
+  .days-header-row{display:flex; margin-top:20px; gap:8px;}
+  .days-header-row span{flex:1; text-align:center; font-size:11px; font-weight:700; color:rgba(255,255,255,.7); letter-spacing:.05em;}
+  .days-cal-grid{display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; margin-top:8px;}
   .day-tab{
-    flex:0 0 auto; position:relative; padding:9px 16px; border-radius:999px;
+    position:relative; border-radius:12px; aspect-ratio:1/0.82;
     border:1px solid rgba(255,255,255,.4); background:rgba(255,255,255,.15);
-    font-size:13px; font-weight:600; cursor:pointer; color:#fff;
-    display:flex; align-items:center; gap:6px; white-space:nowrap; backdrop-filter:blur(2px);
+    font-size:13px; font-weight:700; cursor:pointer; color:#fff;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    padding:4px; line-height:1.25; backdrop-filter:blur(2px);
   }
   .day-tab.active{background:#fff; color:var(--teal-deep); border-color:#fff;}
-  .day-tab .del-day{opacity:.6; font-size:11px; margin-left:2px;}
+  .day-tab .del-day{position:absolute; top:3px; right:5px; opacity:.6; font-size:10px;}
   .day-tab .del-day:hover{opacity:1;}
-  .add-day{flex:0 0 auto; padding:9px 14px; border-radius:999px; border:1px dashed rgba(255,255,255,.6); background:transparent; color:#fff; font-weight:600; font-size:13px; cursor:pointer;}
+  .days-unassigned{grid-column:1/-1; font-size:11px; color:rgba(255,255,255,.75); margin-top:2px;}
+  .add-day-row{display:flex; justify-content:flex-end; margin-top:14px;}
+  .add-day{padding:8px 14px; border-radius:999px; border:1px dashed rgba(255,255,255,.6); background:transparent; color:#fff; font-weight:600; font-size:12.5px; cursor:pointer;}
 
   .view-toggle{display:flex; gap:6px; margin:18px 0 0;}
   .view-btn{flex:1; padding:10px 6px; border-radius:10px; border:1px solid var(--line); background:var(--card); font-weight:700; font-size:12.5px; color:#8a7d95; cursor:pointer;}
@@ -123,7 +131,7 @@
   .item-main{flex:1; min-width:0; cursor:pointer;}
   .item-top{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
   .item-time{font-family:'Space Mono',monospace; font-size:12px; color:var(--teal-deep); font-weight:700;}
-  .item-title{font-size:14.5px; font-weight:600; color:var(--ink);}
+  .item-title{font-size:14.5px; font-weight:600; color:var(--ink); flex-basis:100%; display:block; margin-top:4px;}
   .item-tags{display:flex; align-items:center; gap:6px; margin-top:5px; flex-wrap:wrap;}
   .mini-pill{font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; font-family:'Space Mono',monospace;}
   .mini-pill.need{background:#FBE2E6; color:#B84A61;}
@@ -239,9 +247,11 @@
     <span class="honeymoon-label">✨ OUR ITINERARY ✨</span>
     <span class="honeymoon-script">Honeymoon</span>
     <h1 id="tripTitle">우리의 신혼여행 일정</h1>
-    <div class="sub">8월 1일~8월 16일 올랜도&뉴욕</div>
+    <div class="sub" id="tripSub">일정을 불러오는 중...</div>
 
-    <div class="days-row" id="daysRow"></div>
+    <div class="days-header-row"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+    <div class="days-cal-grid" id="daysRow"></div>
+    <div class="add-day-row"><button class="add-day" id="addDayBtn">+ 일차 추가</button></div>
   </header>
 
   <div class="view-toggle">
@@ -328,9 +338,21 @@
   </div>
 </div>
 
+<div class="overlay" id="metaOverlay">
+  <div class="modal" style="max-width:340px;">
+    <h2 style="font-size:18px;">여행지 이름</h2>
+    <div class="field"><label>목적지 (선택)</label><input type="text" id="mDestination" placeholder="예: 올랜도&뉴욕"></div>
+    <div class="modal-actions">
+      <div style="flex:1;"></div>
+      <button class="btn cancel" id="metaCancelBtn">취소</button>
+      <button class="btn save" id="metaSaveBtn">저장</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="dayOverlay">
   <div class="modal">
-    <h2 id="dayModalTitle">일자 추가</h2>
+    <h2 id="dayModalTitle">일차 추가</h2>
     <div class="field"><label>날짜 (선택, 달력에 표시하려면 입력)</label><input type="date" id="dDate"><div id="dDateHint" style="font-size:11px; color:#9b8fa0; margin-top:4px;"></div></div>
     <div class="field"><label>라벨 (선택, 비우면 날짜로 자동 표시)</label><input type="text" id="dLabel" placeholder="예: 이동일 / Day 1"></div>
     <div class="modal-actions">
@@ -428,7 +450,7 @@ function showError(msg){
   showError._t = setTimeout(()=>b.classList.remove('show'), 2600);
 }
 
-let state = { days: [], activeDayId: null, itemsByDay: {}, view: 'detail' };
+let state = { days: [], activeDayId: null, itemsByDay: {}, view: 'detail', tripMeta: { destination:'' } };
 let editingItemId = null;
 let editingDayId = null;
 let currentPhotoData = "";
@@ -532,20 +554,55 @@ async function applyLoadedDays(days){
   if(state.view==='table') renderTable();
 }
 
+function renderSubtitle(){
+  const dated = state.days.filter(d=>d.date).sort((a,b)=>a.date.localeCompare(b.date));
+  let rangeText = '';
+  if(dated.length){
+    const first = formatDateLabel(dated[0].date).split(' (')[0];
+    const last = formatDateLabel(dated[dated.length-1].date).split(' (')[0];
+    rangeText = (first===last) ? first : `${first}~${last}`;
+  }
+  const dest = (state.tripMeta && state.tripMeta.destination) ? state.tripMeta.destination : '';
+  const text = [rangeText, dest].filter(Boolean).join(' ') || '날짜와 목적지를 눌러서 입력해보세요';
+  document.getElementById('tripSub').textContent = text;
+}
+
 async function init(){
   buildCatRow();
   if(fbDb){
-    // 실시간 동기화: 날짜 목록이 바뀔 때마다(추가/삭제 등) 자동으로 다시 불러와 화면 갱신
     fbDb.ref(fbPath('trip:days')).on('value', async (snap)=>{
       const raw = snap.val();
       const days = raw ? JSON.parse(raw) : null;
       await applyLoadedDays(days);
+      renderSubtitle();
+    });
+    fbDb.ref(fbPath('trip:meta')).on('value', (snap)=>{
+      const raw = snap.val();
+      state.tripMeta = raw ? JSON.parse(raw) : { destination:'' };
+      renderSubtitle();
     });
   } else {
     const days = await storageGet('trip:days');
     await applyLoadedDays(days);
+    const meta = await storageGet('trip:meta');
+    state.tripMeta = meta || { destination:'' };
+    renderSubtitle();
   }
 }
+
+document.getElementById('tripSub').onclick = ()=>{
+  document.getElementById('mDestination').value = (state.tripMeta && state.tripMeta.destination) || '';
+  document.getElementById('metaOverlay').classList.add('open');
+};
+document.getElementById('metaCancelBtn').onclick = ()=> document.getElementById('metaOverlay').classList.remove('open');
+document.getElementById('metaOverlay').onclick = (e)=>{ if(e.target.id==='metaOverlay') document.getElementById('metaOverlay').classList.remove('open'); };
+document.getElementById('metaSaveBtn').onclick = async ()=>{
+  const destination = document.getElementById('mDestination').value.trim();
+  state.tripMeta = { destination };
+  await storageSet('trip:meta', state.tripMeta);
+  renderSubtitle();
+  document.getElementById('metaOverlay').classList.remove('open');
+};
 
 function dayTotal(dayId){
   return (state.itemsByDay[dayId]||[]).reduce((sum,i)=> sum + (Number(i.amount)||0), 0);
@@ -554,14 +611,31 @@ function grandTotal(){
   return state.days.reduce((sum,d)=> sum + dayTotal(d.id), 0);
 }
 
+function dayShortLabel(d){
+  if(d.date){
+    const dt = new Date(d.date + 'T00:00:00');
+    return dt.getDate() + '일';
+  }
+  return d.label || '?';
+}
+
 function renderDays(){
   const row = document.getElementById('daysRow');
   row.innerHTML = '';
-  state.days.forEach((d, idx)=>{
+  const dated = state.days.filter(d=>d.date).sort((a,b)=>a.date.localeCompare(b.date));
+  const undated = state.days.filter(d=>!d.date);
+
+  function makeTab(d){
+    const idx = state.days.indexOf(d);
     const tab = document.createElement('div');
     tab.className = 'day-tab' + (d.id === state.activeDayId && state.view==='detail' ? ' active' : '');
-    tab.innerHTML = `<span class="day-label">${escapeHtml(dayDisplayLabel(d, idx))}</span>` +
+    if(d.date){
+      const wd = new Date(d.date + 'T00:00:00').getDay();
+      tab.style.gridColumn = String(wd + 1);
+    }
+    tab.innerHTML = `<span class="day-label">${escapeHtml(dayShortLabel(d))}</span>` +
       (state.days.length > 1 ? '<span class="del-day" title="삭제">✕</span>' : '');
+    tab.title = dayDisplayLabel(d, idx);
     tab.querySelector('.day-label').onclick = ()=>{
       state.activeDayId = d.id; state.view='detail'; switchView();
       renderDays(); renderList();
@@ -577,16 +651,27 @@ function renderDays(){
         await storageSet('trip:days', state.days);
         await storageDelete('trip:items:' + d.id);
         if(state.activeDayId === d.id) state.activeDayId = state.days[0].id;
-        renderDays(); renderList(); renderTable();
+        renderDays(); renderList(); renderTable(); renderSubtitle();
       };
     }
-    row.appendChild(tab);
-  });
-  const addBtn = document.createElement('button');
-  addBtn.className = 'add-day';
-  addBtn.textContent = '+ 일차 추가';
-  addBtn.onclick = ()=> openDayModal(null);
-  row.appendChild(addBtn);
+    return tab;
+  }
+
+  dated.forEach(d=> row.appendChild(makeTab(d)));
+  if(undated.length){
+    const note = document.createElement('div');
+    note.className = 'days-unassigned';
+    note.textContent = '날짜 미지정: ';
+    undated.forEach(d=>{
+      const chip = makeTab(d);
+      chip.style.display = 'inline-flex';
+      chip.style.aspectRatio = 'auto';
+      chip.style.padding = '4px 10px';
+      chip.style.marginLeft = '4px';
+      note.appendChild(chip);
+    });
+    row.appendChild(note);
+  }
 }
 
 function buildCatRow(){
@@ -803,6 +888,7 @@ function openModal(item){
 function closeModal(){ document.getElementById('overlay').classList.remove('open'); editingItemId=null; currentPhotoData=''; }
 
 document.getElementById('openAddBtn').onclick = ()=> openModal(null);
+document.getElementById('addDayBtn').onclick = ()=> openDayModal(null);
 document.getElementById('cancelBtn').onclick = closeModal;
 document.getElementById('overlay').onclick = (e)=>{ if(e.target.id==='overlay') closeModal(); };
 document.getElementById('lightbox').onclick = ()=> document.getElementById('lightbox').classList.remove('open');
@@ -918,7 +1004,7 @@ document.getElementById('daySaveBtn').onclick = async ()=>{
   }
   await storageSet('trip:days', state.days);
   closeDayModal();
-  renderDays(); renderList(); renderTable();
+  renderDays(); renderList(); renderTable(); renderSubtitle();
 };
 document.getElementById('dayDeleteBtn').onclick = async ()=>{
   if(!(await showConfirm('이 일차와 그 안의 모든 일정을 삭제할까요?'))) return;
@@ -928,7 +1014,7 @@ document.getElementById('dayDeleteBtn').onclick = async ()=>{
   await storageDelete('trip:items:' + editingDayId);
   if(state.activeDayId === editingDayId) state.activeDayId = state.days[0].id;
   closeDayModal();
-  renderDays(); renderList(); renderTable();
+  renderDays(); renderList(); renderTable(); renderSubtitle();
 };
 
 init();
