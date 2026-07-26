@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>신혼여행 짐 체크리스트</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="짐 체크리스트">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236b3fa0'/%3E%3Cstop offset='1' stop-color='%233b1a52'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' fill='url(%23g)'/%3E%3Ctext x='90' y='115' font-size='96' text-anchor='middle'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ctext x='32' y='48' font-size='48' text-anchor='middle'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --purple-deep: #3b1a52;
+    --purple: #6b3fa0;
+    --purple-light: #9b6fc7;
+    --lavender-bg: #f3ecfa;
+    --gold: #e8b84b;
+    --gold-deep: #c8952a;
+    --cream: #fffdf7;
+    --ink: #2c1b3d;
+    --sub: #8874a3;
+    --line: #e3d6f0;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:linear-gradient(180deg,var(--purple-deep) 0%, var(--purple) 220px, var(--lavender-bg) 220px);
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  header{
+    padding:28px 20px 16px;
+    text-align:center;
+    color:#fff;
+    position:relative;
+  }
+  .crown{font-size:28px; display:block; margin-bottom:6px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));}
+  header h1{
+    margin:0;
+    font-size:21px;
+    font-weight:800;
+    letter-spacing:-0.3px;
+  }
+  header p{
+    margin:6px 0 0;
+    font-size:12.5px;
+    color:#e6d6f7;
+  }
+  .sync-pill{
+    display:inline-flex; align-items:center; gap:5px;
+    margin-top:10px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:999px;
+    padding:4px 12px;
+    font-size:11px;
+    color:#e6d6f7;
+  }
+  .sync-dot{width:6px; height:6px; border-radius:50%; background:#7be08a;}
+  .sync-dot.off{background:#e08a7b;}
+  .progress-wrap{
+    max-width:520px;
+    margin:14px auto 0;
+    padding:0 20px;
+  }
+  .progress-card{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:16px;
+    padding:12px 16px;
+    backdrop-filter:blur(6px);
+  }
+  .progress-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    color:#fff; font-size:12.5px; margin-bottom:8px;
+  }
+  .progress-top b{font-size:16px; color:var(--gold);}
+  .bar-bg{
+    background:rgba(255,255,255,.25);
+    height:8px; border-radius:6px; overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--gold-deep), var(--gold));
+    border-radius:6px;
+    transition:width .35s ease;
+  }
+
+  .tabs{
+    max-width:520px;
+    margin:18px auto 0;
+    padding:0 16px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
+  }
+  .tab{
+    background:var(--cream);
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:8px 2px 7px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .2s ease;
+    position:relative;
+  }
+  .tab .icon{font-size:18px; display:block;}
+  .tab .name{font-size:10.5px; font-weight:700; margin-top:3px; color:var(--sub); display:block;}
+  .tab.active{
+    background:var(--purple);
+    border-color:var(--purple);
+  }
+  .tab.active .name{color:#fff;}
+  .tab .mini-dot{
+    position:absolute; top:6px; right:8px;
+    width:7px; height:7px; border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 0 2px var(--cream);
+  }
+  .tab.active .mini-dot{box-shadow:0 0 0 2px var(--purple);}
+  .tab .mini-dot.hide{display:none;}
+
+  main{
+    max-width:520px;
+    margin:16px auto 0;
+    padding:0 16px;
+  }
+  .luggage-title{
+    display:flex; align-items:center; gap:8px;
+    margin:4px 2px 12px;
+  }
+  .luggage-title .badge{
+    background:var(--gold);
+    color:var(--purple-deep);
+    font-weight:800;
+    font-size:12px;
+    padding:3px 10px;
+    border-radius:999px;
+  }
+  .luggage-title span.label{font-size:14.5px; font-weight:700; color:var(--purple-deep);}
+
+  .section{
+    background:var(--cream);
+    border-radius:16px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(59,26,82,.06);
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .section-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .section-head .left{display:flex; align-items:center; gap:10px;}
+  .section-head .emoji{font-size:18px;}
+  .section-head h3{margin:0; font-size:14.5px; font-weight:800; color:var(--purple-deep);}
+  .section-head .count{font-size:11.5px; color:var(--sub); font-weight:600;}
+  .chevron{
+    font-size:12px; color:var(--purple-light);
+    transition:transform .2s ease;
+  }
+  .section.collapsed .chevron{transform:rotate(-90deg);}
+  .section-del{
+    border:none; background:none;
+    color:var(--sub);
+    font-size:15px;
+    width:26px; height:26px;
+    border-radius:8px;
+  }
+  .section-del:active{background:#f0e8fa;}
+  .add-section-row{
+    max-width:520px;
+    margin:4px auto 0;
+    padding:0 16px;
+    display:flex;
+    gap:8px;
+  }
+  .add-section-row input{
+    flex:1;
+    border:1.5px dashed var(--purple-light);
+    border-radius:12px;
+    padding:11px 13px;
+    font-size:13.5px;
+    background:var(--cream);
+    color:var(--ink);
+    outline:none;
+  }
+  .add-section-row button{
+    border:none;
+    background:var(--gold);
+    color:var(--purple-deep);
+    font-size:13.5px;
+    font-weight:800;
+    border-radius:12px;
+    padding:0 18px;
+  }
+  .items{
+    padding:0 16px 12px;
+  }
+  .section.collapsed .items{display:none;}
+  .item{
+    display:flex; align-items:center; gap:11px;
+    padding:9px 4px;
+    border-top:1px solid #f0e8fa;
+    cursor:pointer;
+  }
+  .item:first-child{border-top:none;}
+  .checkbox{
+    width:22px; height:22px; min-width:22px;
+    border-radius:7px;
+    border:2px solid var(--purple-light);
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s ease;
+    background:#fff;
+  }
+  .checkbox svg{width:13px; height:13px; opacity:0; transition:opacity .15s ease;}
+  .item.checked .checkbox{
+    background:linear-gradient(135deg, var(--gold-deep), var(--gold));
+    border-color:var(--gold-deep);
+  }
+  .item.checked .checkbox svg{opacity:1;}
+  .item-text{font-size:14px; color:var(--ink); line-height:1.3; flex:1;}
+  .item.checked .item-text{color:var(--sub); text-decoration:line-through; text-decoration-color:var(--purple-light);}
+  .item-del{
+    width:26px; height:26px; min-width:26px;
+    border:none; background:none;
+    color:var(--sub);
+    font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:8px;
+  }
+  .item-del:active{background:#f0e8fa;}
+
+  .add-row{
+    display:flex; gap:8px; padding:10px 16px 4px;
+  }
+  .add-row input{
+    flex:1;
+    border:1.5px dashed var(--line);
+    border-radius:10px;
+    padding:9px 11px;
+    font-size:13px;
+    background:#fbf8ff;
+    color:var(--ink);
+    outline:none;
+  }
+  .add-row input:focus{border-color:var(--purple-light);}
+  .add-row button{
+    border:none;
+    background:var(--purple);
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    border-radius:10px;
+    padding:0 16px;
+  }
+
+  .reset-wrap{
+    max-width:520px;
+    margin:8px auto 0;
+    padding:6px 16px 0;
+    text-align:center;
+  }
+  .reset-btn{
+    background:none;
+    border:none;
+    color:var(--sub);
+    font-size:12px;
+    text-decoration:underline;
+    padding:8px;
+  }
+  .toast{
+    position:fixed;
+    bottom:22px; left:50%;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--purple-deep);
+    color:#fff;
+    font-size:12.5px;
+    padding:9px 18px;
+    border-radius:999px;
+    opacity:0;
+    transition:all .25s ease;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="crown">👑✨</span>
+  <h1>신혼여행 짐 체크리스트</h1>
+  <p>캐리어 4개 + 결혼식 짐, 빠뜨린 것 없이 야무지게 챙기기</p>
+  <span class="sync-pill"><span class="sync-dot off" id="syncDot"></span><span id="syncLabel">연결 중...</span></span>
+  <div class="progress-wrap">
+    <div class="progress-card">
+      <div class="progress-top">
+        <span id="progressLabel">전체 준비</span>
+        <b id="progressPct">0%</b>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<main>
+  <div class="luggage-title">
+    <span class="badge" id="luggageBadge">1번</span>
+    <span class="label" id="luggageLabel">신랑 캐리어</span>
+  </div>
+  <div id="sections"></div>
+  <div class="add-section-row">
+    <input type="text" id="newSectionInput" placeholder="새 항목(대분류) 이름 (예: 아기 용품)" />
+    <button id="addSectionBtn">추가</button>
+  </div>
+</main>
+
+<div class="reset-wrap">
+  <button class="reset-btn" id="resetBtn">이 캐리어 체크 전체 해제</button>
+</div>
+
+<div class="toast" id="toast">저장됨</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* honeymoon-bf201 프로젝트 (허니문 앱과 동일). packingChecklist 경로만 새로 사용하므로
+   기존 여행 일정 데이터와는 겹치지 않아요. */
+const firebaseConfig = {
+  apiKey: "AIzaSyBL7_m3BnoRwMkg2kPzGJzxy2Q--j6hA8Q",
+  authDomain: "honeymoon-bf201.firebaseapp.com",
+  databaseURL: "https://honeymoon-bf201-default-rtdb.firebaseio.com",
+  projectId: "honeymoon-bf201",
+  storageBucket: "honeymoon-bf201.firebasestorage.app",
+  messagingSenderId: "20631327963",
+  appId: "1:20631327963:web:608f7951c0573f09f768fe",
+  measurementId: "G-1RZ1Y212M4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dataRef = ref(db, "packingChecklist");
+
+const luggageMeta = [
+  { id: "L1", icon: "🤵", name: "신랑 캐리어" },
+  { id: "L2", icon: "👰", name: "신부 캐리어" },
+  { id: "L3", icon: "🧴", name: "공용 캐리어" },
+  { id: "L4", icon: "💼", name: "기내용 가방" },
+  { id: "L5", icon: "💒", name: "결혼식 짐" }
+];
+
+const defaultData = {
+  L1: [
+    { title: "의류", emoji: "👔", items: ["속옷/양말 여벌", "상의", "하의(반바지/긴바지)", "잠옷", "수영복", "겉옷/가디건", "벨트", "운동화 여벌"] },
+    { title: "세면/위생", emoji: "🧼", items: ["면도기/쉐이빙 폼", "헤어 제품", "선크림"] },
+    { title: "전자기기", emoji: "🔌", items: ["보조배터리", "충전 케이블", "멀티 어댑터(콘센트)", "카메라/짐벌"] }
+  ],
+  L2: [
+    { title: "의류", emoji: "👗", items: ["속옷 여벌", "원피스/투피스", "잠옷", "수영복/래시가드", "가디건/스카프", "액세서리", "샌들/구두"] },
+    { title: "뷰티/세면", emoji: "💄", items: ["기초 화장품 세트", "메이크업 파우치", "클렌징", "헤어 드라이기/고데기", "선크림", "생리용품"] }
+  ],
+  L3: [
+    { title: "여행 서류", emoji: "📄", items: ["여권(유효기간 확인)", "항공권/이티켓 출력", "숙소 예약 확인서", "여행자보험 서류", "국제운전면허증", "환전한 현금/카드"] },
+    { title: "상비약", emoji: "💊", items: ["개인 상비약", "멀미약", "소화제/지사제", "밴드/연고", "생리통약"] },
+    { title: "공용 아이템", emoji: "🧳", items: ["여행용 세면도구 파우치", "우산/우비", "지퍼백/파우치 여분", "빨래집게/휴대용 빨랫줄"] }
+  ],
+  L4: [
+    { title: "필수 지참", emoji: "🛂", items: ["여권 원본", "지갑(현금/카드)", "휴대폰 & 충전기", "탑승권"] },
+    { title: "기내 편의", emoji: "🎧", items: ["목베개", "이어폰/헤드셋", "얇은 겉옷", "물티슈/마스크", "이북/책", "간단한 간식"] }
+  ],
+  L5: [
+    { title: "예식 준비물", emoji: "💍", items: ["청첩장 여분", "예물(반지)", "혼주 한복/예복", "축의금 봉투/방명록", "혼인신고서"] },
+    { title: "신부 소품", emoji: "👰‍♀️", items: ["속치마/보정속옷", "웨딩슈즈", "부케 관련 소품", "면사포/헤어핀", "여벌 스타킹"] },
+    { title: "신랑 소품", emoji: "🤵‍♂️", items: ["예복/턱시도", "커프스/타이", "구두", "여벌 셔츠"] },
+    { title: "당일 챙길 것", emoji: "📸", items: ["감사 인사말 메모", "촬영 소품", "여벌 메이크업 파우치", "비상약(두통약 등)"] }
+  ]
+};
+
+function buildInitialState(){
+  const s = {};
+  Object.keys(defaultData).forEach(lid => {
+    s[lid] = defaultData[lid].map(sec => ({
+      title: sec.title,
+      emoji: sec.emoji,
+      collapsed: false,
+      items: sec.items.map(name => ({ name, checked: false }))
+    }));
+  });
+  return s;
+}
+
+let state = null;
+let synced = false;
+
+function saveState(){
+  set(dataRef, state)
+    .then(() => showToast("저장됨"))
+    .catch(() => showToast("저장 실패 (인터넷 연결을 확인해주세요)"));
+}
+
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1200);
+}
+
+let activeIdx = 0;
+
+function renderTabs(){
+  const wrap = document.getElementById('tabs');
+  wrap.innerHTML = "";
+  luggageMeta.forEach((lg, idx) => {
+    const done = isLuggageDone(lg.id);
+    const el = document.createElement('div');
+    el.className = 'tab' + (idx === activeIdx ? ' active' : '');
+    el.innerHTML = `
+      <span class="mini-dot ${done ? '' : 'hide'}"></span>
+      <span class="icon">${lg.icon}</span>
+      <span class="name">${lg.name.replace(' 캐리어','').replace(' 가방','')}</span>
+    `;
+    el.addEventListener('click', () => { activeIdx = idx; renderAll(); });
+    wrap.appendChild(el);
+  });
+}
+
+function isLuggageDone(lid){
+  const secs = state[lid];
+  return secs.every(sec => sec.items.every(it => it.checked)) && secs.some(sec => sec.items.length);
+}
+
+function luggageProgress(lid){
+  const secs = state[lid];
+  let total = 0, done = 0;
+  secs.forEach(sec => sec.items.forEach(it => { total++; if(it.checked) done++; }));
+  return { total, done };
+}
+
+function overallProgress(){
+  let total = 0, done = 0;
+  Object.keys(state).forEach(lid => {
+    const p = luggageProgress(lid);
+    total += p.total; done += p.done;
+  });
+  return { total, done };
+}
+
+function renderHeader(){
+  const lg = luggageMeta[activeIdx];
+  document.getElementById('luggageBadge').textContent = (activeIdx+1) + "번";
+  document.getElementById('luggageLabel').textContent = lg.icon + " " + lg.name;
+
+  const { total, done } = overallProgress();
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('progressPct').textContent = pct + "%";
+  document.getElementById('progressBar').style.width = pct + "%";
+  document.getElementById('progressLabel').textContent = `전체 준비 (${done}/${total})`;
+}
+
+function renderSections(){
+  const lid = luggageMeta[activeIdx].id;
+  const secs = state[lid];
+  const wrap = document.getElementById('sections');
+  wrap.innerHTML = "";
+
+  secs.forEach((sec, sIdx) => {
+    const doneCount = sec.items.filter(i => i.checked).length;
+    const sectionEl = document.createElement('div');
+    sectionEl.className = 'section' + (sec.collapsed ? ' collapsed' : '');
+
+    const head = document.createElement('div');
+    head.className = 'section-head';
+    head.innerHTML = `
+      <div class="left">
+        <span class="emoji">${sec.emoji}</span>
+        <h3>${sec.title}</h3>
+      </div>
+      <div style="display:flex; align-items:center; gap:4px;">
+        <span class="count">${doneCount}/${sec.items.length}</span>
+        <button class="section-del" title="이 항목 전체 삭제">🗑</button>
+        <span class="chevron">▾</span>
+      </div>
+    `;
+    head.addEventListener('click', (e) => {
+      if(e.target.closest('.section-del')) return;
+      sec.collapsed = !sec.collapsed;
+      saveState();
+      renderAll();
+    });
+    sectionEl.appendChild(head);
+
+    head.querySelector('.section-del').addEventListener('click', (e) => {
+      e.stopPropagation();
+      secs.splice(sIdx, 1);
+      saveState();
+      renderAll();
+    });
+
+    const itemsEl = document.createElement('div');
+    itemsEl.className = 'items';
+    sec.items.forEach((it, iIdx) => {
+      const row = document.createElement('div');
+      row.className = 'item' + (it.checked ? ' checked' : '');
+      row.innerHTML = `
+        <div class="checkbox">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9 17.5L20 6.5" stroke="#3b1a52" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="item-text">${it.name}</div>
+        <button class="item-del" title="삭제">✕</button>
+      `;
+      row.querySelector('.checkbox').addEventListener('click', () => {
+        it.checked = !it.checked;
+        saveState();
+        renderAll();
+      });
+      row.querySelector('.item-text').addEventListener('click', () => {
+        it.checked = !it.checked;
+        saveState();
+        renderAll();
+      });
+      row.querySelector('.item-del').addEventListener('click', (e) => {
+        e.stopPropagation();
+        sec.items.splice(iIdx, 1);
+        saveState();
+        renderAll();
+      });
+      itemsEl.appendChild(row);
+    });
+
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.innerHTML = `
+      <input type="text" placeholder="항목 추가하기" />
+      <button>추가</button>
+    `;
+    const input = addRow.querySelector('input');
+    const btn = addRow.querySelector('button');
+    const addItem = () => {
+      const val = input.value.trim();
+      if(!val) return;
+      sec.items.push({ name: val, checked: false });
+      input.value = "";
+      saveState();
+      renderAll();
+    };
+    btn.addEventListener('click', addItem);
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') addItem(); });
+    itemsEl.appendChild(addRow);
+
+    sectionEl.appendChild(itemsEl);
+    wrap.appendChild(sectionEl);
+  });
+}
+
+function renderAll(){
+  renderTabs();
+  renderHeader();
+  renderSections();
+}
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  const lid = luggageMeta[activeIdx].id;
+  state[lid].forEach(sec => sec.items.forEach(it => it.checked = false));
+  saveState();
+  renderAll();
+});
+
+document.getElementById('addSectionBtn').addEventListener('click', () => {
+  const input = document.getElementById('newSectionInput');
+  const val = input.value.trim();
+  if(!val) return;
+  const lid = luggageMeta[activeIdx].id;
+  state[lid].push({ title: val, collapsed: false, emoji: "📦", items: [] });
+  input.value = "";
+  saveState();
+  renderAll();
+});
+document.getElementById('newSectionInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter') document.getElementById('addSectionBtn').click();
+});
+
+function setSyncStatus(on){
+  document.getElementById('syncDot').classList.toggle('off', !on);
+  document.getElementById('syncLabel').textContent = on ? "신랑과 실시간 연동 중" : "연결 중...";
+}
+
+onValue(dataRef, (snapshot) => {
+  const val = snapshot.val();
+  if(val){
+    state = val;
+  } else if(!synced){
+    state = buildInitialState();
+    set(dataRef, state);
+  }
+  synced = true;
+  setSyncStatus(true);
+  renderAll();
+}, (err) => {
+  setSyncStatus(false);
+  showToast("연결 실패: 인터넷 연결을 확인해주세요");
+});
+</script>
+</body>
+</html>
