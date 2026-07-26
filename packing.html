@@ -399,6 +399,31 @@ function buildInitialState(){
   return s;
 }
 
+/* 파이어베이스는 빈 배열/빈 객체를 저장하지 않고 지워버리기 때문에,
+   불러온 데이터에 items나 섹션이 비어서 없는 경우 항상 빈 배열로 채워서
+   화면이 깨지지 않게 방어한다. */
+function normalizeState(raw){
+  const out = {};
+  luggageMeta.forEach(lg => {
+    const rawArr = raw ? raw[lg.id] : null;
+    let arr = [];
+    if(Array.isArray(rawArr)) arr = rawArr;
+    else if(rawArr && typeof rawArr === 'object') arr = Object.values(rawArr);
+    out[lg.id] = arr.filter(Boolean).map(sec => {
+      let items = [];
+      if(Array.isArray(sec.items)) items = sec.items;
+      else if(sec.items && typeof sec.items === 'object') items = Object.values(sec.items);
+      return {
+        title: sec.title || "",
+        emoji: sec.emoji || "📦",
+        collapsed: !!sec.collapsed,
+        items: items.filter(Boolean)
+      };
+    });
+  });
+  return out;
+}
+
 let state = null;
 let synced = false;
 
@@ -599,14 +624,19 @@ function setSyncStatus(on){
 onValue(dataRef, (snapshot) => {
   const val = snapshot.val();
   if(val){
-    state = val;
+    state = normalizeState(val);
   } else if(!synced){
     state = buildInitialState();
     set(dataRef, state);
   }
   synced = true;
   setSyncStatus(true);
-  renderAll();
+  try{
+    renderAll();
+  }catch(e){
+    console.error(e);
+    showToast("표시 중 오류 (새로고침 해주세요)");
+  }
 }, (err) => {
   setSyncStatus(false);
   showToast("연결 실패: 인터넷 연결을 확인해주세요");
@@ -614,5 +644,3 @@ onValue(dataRef, (snapshot) => {
 </script>
 </body>
 </html>
-
-
