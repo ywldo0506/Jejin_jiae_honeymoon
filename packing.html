@@ -237,6 +237,40 @@
   }
   .item-del:active{background:#f0e8fa;}
 
+  .carrier-badge{
+    width:26px; height:26px; min-width:26px;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:#fff;
+    color:var(--sub);
+    font-size:12px;
+    font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .carrier-badge.c1{background:#efe6fb; color:#6b3fa0; border-color:#c9b3ea;}
+  .carrier-badge.c2{background:#fdf1d9; color:#c8952a; border-color:#eccf94;}
+  .carrier-badge.c3{background:#e3f1fc; color:#2f7fbb; border-color:#a9d3ef;}
+  .carrier-badge.c4{background:#fbe4ec; color:#c04770; border-color:#f0b0c8;}
+
+  .carrier-summary{
+    max-width:520px;
+    margin:10px auto 0;
+    padding:0 20px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:6px;
+  }
+  .carrier-pill{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28);
+    border-radius:12px;
+    padding:6px 4px;
+    text-align:center;
+    color:#fff;
+  }
+  .carrier-pill .num{font-size:10.5px; opacity:.85;}
+  .carrier-pill .cnt{font-size:14px; font-weight:800; color:var(--gold);}
+
   .add-row{
     display:flex; gap:8px; padding:10px 16px 4px;
   }
@@ -308,6 +342,7 @@
       <div class="bar-bg"><div class="bar-fill" id="progressBar" style="width:0%"></div></div>
     </div>
   </div>
+  <div class="carrier-summary" id="carrierSummary"></div>
 </header>
 
 <div class="tabs" id="tabs"></div>
@@ -393,7 +428,7 @@ function buildInitialState(){
       title: sec.title,
       emoji: sec.emoji,
       collapsed: false,
-      items: sec.items.map(name => ({ name, checked: false }))
+      items: sec.items.map(name => ({ name, checked: false, carrier: null }))
     }));
   });
   return s;
@@ -417,7 +452,11 @@ function normalizeState(raw){
         title: sec.title || "",
         emoji: sec.emoji || "📦",
         collapsed: !!sec.collapsed,
-        items: items.filter(Boolean)
+        items: items.filter(Boolean).map(it => ({
+          name: (it && it.name) || "",
+          checked: !!(it && it.checked),
+          carrier: (it && [1,2,3,4].includes(it.carrier)) ? it.carrier : null
+        }))
       };
     });
   });
@@ -543,6 +582,7 @@ function renderSections(){
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9 17.5L20 6.5" stroke="#3b1a52" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <div class="item-text">${it.name}</div>
+        <button class="carrier-badge ${it.carrier ? 'c'+it.carrier : ''}" title="담은 캐리어 선택 (탭해서 변경)">${it.carrier ? it.carrier : '–'}</button>
         <button class="item-del" title="삭제">✕</button>
       `;
       row.querySelector('.checkbox').addEventListener('click', () => {
@@ -552,6 +592,12 @@ function renderSections(){
       });
       row.querySelector('.item-text').addEventListener('click', () => {
         it.checked = !it.checked;
+        saveState();
+        renderAll();
+      });
+      row.querySelector('.carrier-badge').addEventListener('click', (e) => {
+        e.stopPropagation();
+        it.carrier = it.carrier ? (it.carrier % 4) + 1 : 1;
         saveState();
         renderAll();
       });
@@ -575,7 +621,7 @@ function renderSections(){
     const addItem = () => {
       const val = input.value.trim();
       if(!val) return;
-      sec.items.push({ name: val, checked: false });
+      sec.items.push({ name: val, checked: false, carrier: null });
       input.value = "";
       saveState();
       renderAll();
@@ -589,9 +635,31 @@ function renderSections(){
   });
 }
 
+function carrierCounts(){
+  const counts = {1:0,2:0,3:0,4:0};
+  Object.keys(state).forEach(lid => {
+    state[lid].forEach(sec => sec.items.forEach(it => {
+      if(it.carrier && counts[it.carrier] !== undefined) counts[it.carrier]++;
+    }));
+  });
+  return counts;
+}
+
+function renderCarrierSummary(){
+  const counts = carrierCounts();
+  const wrap = document.getElementById('carrierSummary');
+  wrap.innerHTML = [1,2,3,4].map(n => `
+    <div class="carrier-pill">
+      <div class="num">🧳${n}번</div>
+      <div class="cnt">${counts[n]}개</div>
+    </div>
+  `).join('');
+}
+
 function renderAll(){
   renderTabs();
   renderHeader();
+  renderCarrierSummary();
   renderSections();
 }
 
